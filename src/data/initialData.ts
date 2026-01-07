@@ -1,0 +1,203 @@
+import { DailyChallenge, Lesson, LeaderboardEntry, Reward } from '@/types/app';
+
+export const initialDailyChallenges: DailyChallenge[] = [
+  {
+    id: 'challenge-1',
+    title: 'Complete 1 lesson',
+    description: 'Learn something new today!',
+    reward: 50,
+    completed: false,
+    type: 'lesson',
+  },
+  {
+    id: 'challenge-2',
+    title: 'Track your morning sales',
+    description: 'Log your first sale of the day',
+    reward: 30,
+    completed: false,
+    type: 'sales',
+  },
+  {
+    id: 'challenge-3',
+    title: 'Help a fellow entrepreneur',
+    description: 'Share a tip in the community',
+    reward: 100,
+    completed: false,
+    type: 'peer',
+  },
+];
+
+export const initialLessons: Lesson[] = [
+  {
+    id: 'lesson-1',
+    title: 'Setting Up Your Stall',
+    description: 'Learn the basics of arranging products to attract customers',
+    duration: 3,
+    category: 'basics',
+    thumbnailEmoji: '🏪',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-2',
+    title: 'Greeting Customers Right',
+    description: 'First impressions matter! Master the art of welcoming buyers',
+    duration: 4,
+    category: 'sales',
+    thumbnailEmoji: '🤝',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-3',
+    title: 'Smart Pricing Strategies',
+    description: 'Set prices that attract customers and maximize profit',
+    duration: 5,
+    category: 'finance',
+    thumbnailEmoji: '💰',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-4',
+    title: 'Going Digital with UPI',
+    description: 'Accept digital payments and grow your customer base',
+    duration: 4,
+    category: 'digital',
+    thumbnailEmoji: '📱',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-5',
+    title: 'Word of Mouth Marketing',
+    description: 'Turn happy customers into your best promoters',
+    duration: 3,
+    category: 'marketing',
+    thumbnailEmoji: '📢',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-6',
+    title: 'Managing Daily Expenses',
+    description: 'Track costs and understand your real profit',
+    duration: 5,
+    category: 'finance',
+    thumbnailEmoji: '📊',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-7',
+    title: 'Seasonal Business Tips',
+    description: 'Adapt your business for festivals and weather changes',
+    duration: 4,
+    category: 'sales',
+    thumbnailEmoji: '🎉',
+    progress: 0,
+    completed: false,
+  },
+  {
+    id: 'lesson-8',
+    title: 'Building Customer Loyalty',
+    description: 'Keep customers coming back again and again',
+    duration: 5,
+    category: 'marketing',
+    thumbnailEmoji: '❤️',
+    progress: 0,
+    completed: false,
+  },
+];
+
+export const mockLeaderboard: LeaderboardEntry[] = [
+  { rank: 1, name: 'You', points: 2450, isCurrentUser: true },
+  { rank: 2, name: 'Amit Kumar', points: 2200, isCurrentUser: false },
+  { rank: 3, name: 'Sunita Devi', points: 1950, isCurrentUser: false },
+  { rank: 4, name: 'Raju Sharma', points: 1800, isCurrentUser: false },
+  { rank: 5, name: 'Priya Singh', points: 1650, isCurrentUser: false },
+];
+
+export const initialRewards: Reward[] = [
+  {
+    id: 'reward-1',
+    title: 'Business Card Design',
+    description: '50 professional business cards with your name and contact',
+    cost: 500,
+    category: 'marketing',
+    emoji: '🪪',
+    redeemed: false,
+  },
+  {
+    id: 'reward-2',
+    title: 'Price Tag Stickers',
+    description: 'Pack of 100 customizable price tag stickers',
+    cost: 300,
+    category: 'tools',
+    emoji: '🏷️',
+    redeemed: false,
+  },
+  {
+    id: 'reward-3',
+    title: 'Banner Template',
+    description: 'Professional banner design for your stall',
+    cost: 750,
+    category: 'marketing',
+    emoji: '🎨',
+    redeemed: false,
+  },
+  {
+    id: 'reward-4',
+    title: 'Calculator Pro',
+    description: 'Unlock advanced profit calculations and forecasting',
+    cost: 1000,
+    category: 'premium',
+    emoji: '🧮',
+    redeemed: false,
+  },
+  {
+    id: 'reward-5',
+    title: 'Carry Bags Pack',
+    description: '100 branded carry bags for your customers',
+    cost: 600,
+    category: 'tools',
+    emoji: '🛍️',
+    redeemed: false,
+  },
+  {
+    id: 'reward-6',
+    title: 'WhatsApp Marketing Guide',
+    description: 'Premium guide to promote your business on WhatsApp',
+    cost: 400,
+    category: 'premium',
+    emoji: '💬',
+    redeemed: false,
+  },
+];
+
+export const quickAddItems = [
+  { emoji: '🍅', name: 'Tomatoes', defaultPrice: 40 },
+  { emoji: '🥔', name: 'Potatoes', defaultPrice: 30 },
+  { emoji: '🧅', name: 'Onions', defaultPrice: 35 },
+  { emoji: '🥕', name: 'Carrots', defaultPrice: 45 },
+  { emoji: '🌶️', name: 'Chillies', defaultPrice: 60 },
+  { emoji: '🥬', name: 'Cabbage', defaultPrice: 25 },
+  { emoji: '🍆', name: 'Brinjal', defaultPrice: 30 },
+  { emoji: '🫑', name: 'Capsicum', defaultPrice: 50 },
+];
+
+export const categoryLabels = {
+  basics: 'Basics',
+  sales: 'Sales',
+  digital: 'Digital',
+  marketing: 'Marketing',
+  finance: 'Finance',
+};
+
+export const businessTypes = [
+  { id: 'vegetables', label: 'Vegetables & Fruits', emoji: '🥬' },
+  { id: 'street-food', label: 'Street Food', emoji: '🍲' },
+  { id: 'handicrafts', label: 'Handicrafts', emoji: '🧶' },
+  { id: 'services', label: 'Services', emoji: '🔧' },
+  { id: 'other', label: 'Other', emoji: '📦' },
+] as const;
