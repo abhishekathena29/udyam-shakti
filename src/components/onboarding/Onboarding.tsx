@@ -1,21 +1,16 @@
 import { useState } from 'react';
-import { LanguageSelect } from './LanguageSelect';
 import { BusinessTypeSelect } from './BusinessTypeSelect';
 import { Tutorial } from './Tutorial';
 import { BusinessType } from '@/types/app';
 import { useApp } from '@/contexts/AppContext';
 
-type OnboardingStep = 'language' | 'business' | 'tutorial';
+type OnboardingStep = 'business' | 'tutorial';
 
 export function Onboarding() {
-  const [step, setStep] = useState<OnboardingStep>('language');
+  const [step, setStep] = useState<OnboardingStep>('business');
   const [businessType, setBusinessType] = useState<BusinessType>('vegetables');
   const [customBusinessType, setCustomBusinessType] = useState<string>();
   const { completeOnboarding } = useApp();
-
-  const handleLanguageNext = () => {
-    setStep('business');
-  };
 
   const handleBusinessNext = (type: BusinessType, customType?: string) => {
     setBusinessType(type);
@@ -32,8 +27,6 @@ export function Onboarding() {
   };
 
   switch (step) {
-    case 'language':
-      return <LanguageSelect onNext={handleLanguageNext} />;
     case 'business':
       return <BusinessTypeSelect onNext={handleBusinessNext} onSkip={handleBusinessSkip} />;
     case 'tutorial':

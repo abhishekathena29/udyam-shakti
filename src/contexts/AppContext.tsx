@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   UserProfile, 
   BizCoins, 
@@ -30,7 +31,7 @@ interface AppContextType {
   dailyChallenges: DailyChallenge[];
   completeChallenge: (id: string) => void;
   
-  // Lessons
+  // Lessons (hard-coded with user progress)
   lessons: Lesson[];
   updateLessonProgress: (id: string, progress: number) => void;
   completeLesson: (id: string) => void;
@@ -49,7 +50,15 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useLocalStorage<UserProfile | null>('udyam-user', null);
+  const { userProfile: firebaseUserProfile, currentUser } = useAuth();
+  
+  // Use Firebase user profile if available, otherwise fallback to localStorage
+  const [localUser, setLocalUser] = useLocalStorage<UserProfile | null>('udyam-user', null);
+  const user = firebaseUserProfile || localUser;
+  
+  const setUser = useCallback((newUser: UserProfile | null) => {
+    setLocalUser(newUser);
+  }, [setLocalUser]);
   const [bizCoins, setBizCoins] = useLocalStorage<BizCoins>('udyam-coins', {
     total: 0,
     earnedToday: 0,
@@ -64,7 +73,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     'udyam-challenges',
     initialDailyChallenges
   );
-  const [lessons, setLessons] = useLocalStorage<Lesson[]>('udyam-lessons', initialLessons);
+  // Hard-coded lessons - always use initial lessons
+  const [lessons] = useState<Lesson[]>(initialLessons);
+  
+  // Store only progress and completion status in localStorage
+  const [lessonProgress, setLessonProgress] = useLocalStorage<Record<string, { progress: number; completed: boolean }>>(
+    'udyam-lesson-progress',
+    {}
+  );
+  
+  // Merge hard-coded lessons with user progress
+  const lessonsWithProgress = lessons.map(lesson => ({
+    ...lesson,
+    progress: lessonProgress[lesson.id]?.progress ?? 0,
+    completed: lessonProgress[lesson.id]?.completed ?? false,
+  }));
   const [transactions, setTransactions] = useLocalStorage<Transaction[]>('udyam-transactions', []);
   const [rewards, setRewards] = useLocalStorage<Reward[]>('udyam-rewards', initialRewards);
 
@@ -138,27 +161,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [setDailyChallenges, addCoins]);
 
   const updateLessonProgress = useCallback((id: string, progress: number) => {
-    setLessons(prev =>
-      prev.map(l => (l.id === id ? { ...l, progress: Math.min(100, progress) } : l))
-    );
-  }, [setLessons]);
+    setLessonProgress(prev => ({
+      ...prev,
+      [id]: {
+        progress: Math.min(100, progress),
+        completed: prev[id]?.completed ?? false,
+      },
+    }));
+  }, [setLessonProgress]);
 
   const completeLesson = useCallback((id: string) => {
-    setLessons(prev =>
-      prev.map(l => {
-        if (l.id === id && !l.completed) {
-          addCoins(50);
-          // Check if this completes the lesson challenge
-          const lessonChallenge = dailyChallenges.find(c => c.type === 'lesson' && !c.completed);
-          if (lessonChallenge) {
-            completeChallenge(lessonChallenge.id);
-          }
-          return { ...l, progress: 100, completed: true };
-        }
-        return l;
-      })
-    );
-  }, [setLessons, addCoins, dailyChallenges, completeChallenge]);
+    setLessonProgress(prev => {
+      if (prev[id]?.completed) return prev; // Already completed
+      
+      addCoins(50);
+      // Check if this completes the lesson challenge
+      const lessonChallenge = dailyChallenges.find(c => c.type === 'lesson' && !c.completed);
+      if (lessonChallenge) {
+        completeChallenge(lessonChallenge.id);
+      }
+      
+      return {
+        ...prev,
+        [id]: {
+          progress: 100,
+          completed: true,
+        },
+      };
+    });
+  }, [setLessonProgress, addCoins, dailyChallenges, completeChallenge]);
 
   const addTransaction = useCallback((transaction: Omit<Transaction, 'id' | 'timestamp'>) => {
     const newTransaction: Transaction = {
@@ -220,7 +251,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         updateStreak,
         dailyChallenges,
         completeChallenge,
-        lessons,
+        lessons: lessonsWithProgress,
         updateLessonProgress,
         completeLesson,
         transactions,
