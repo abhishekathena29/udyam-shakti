@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Play, CheckCircle2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 // Hardcoded short descriptions and content for each lesson
 const lessonDetails: Record<string, { shortDescription: string; content: string }> = {
@@ -314,7 +315,8 @@ Customer feedback is free advice that helps you grow your business.`
 };
 
 export default function Learn() {
-  const { lessons } = useApp();
+  const { lessons, completeLesson } = useApp();
+  const { toast } = useToast();
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
 
   const categories = [
@@ -429,6 +431,26 @@ export default function Learn() {
                   );
                 })}
               </div>
+            </div>
+          )}
+          {currentLesson && !currentLesson.completed && (
+            <div className="mt-6 flex justify-end">
+              <Button
+                onClick={() => {
+                  if (selectedLesson) {
+                    completeLesson(selectedLesson);
+                    toast({
+                      title: 'Lesson Completed!',
+                      description: `You earned 50 BizCoins! ${currentLesson.title} challenge also completed!`,
+                    });
+                    setSelectedLesson(null);
+                  }
+                }}
+                className="w-full sm:w-auto"
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Mark as Complete
+              </Button>
             </div>
           )}
         </DialogContent>

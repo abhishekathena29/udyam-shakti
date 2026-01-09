@@ -153,7 +153,6 @@ export default function Home() {
               {[
                 { icon: BookOpen, label: 'Learn Today', href: '/learn', emoji: '📚' },
                 { icon: TrendingUp, label: 'Track Sales', href: '/track', emoji: '💰' },
-                { icon: Users, label: 'Ask Mentor', href: '/learn', emoji: '🤝' },
                 { icon: BarChart3, label: 'My Progress', href: '/profile', emoji: '📊' },
               ].map((action) => (
                 <Button

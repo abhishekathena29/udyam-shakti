@@ -7,7 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { quickAddItems } from '@/data/initialData';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useApp } from '@/contexts/AppContext';
 import { transactionService } from '@/services/transactionService';
+import { useToast } from '@/hooks/use-toast';
 
 interface AddTransactionDialogProps {
   open: boolean;
@@ -17,6 +19,8 @@ interface AddTransactionDialogProps {
 
 export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTransactionDialogProps) {
   const { currentUser } = useAuth();
+  const { addTransaction: addTransactionToContext } = useApp();
+  const { toast } = useToast();
   const [item, setItem] = useState('');
   const [emoji, setEmoji] = useState('📦');
   const [amount, setAmount] = useState('');
@@ -53,12 +57,29 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
     setIsSubmitting(true);
 
     try {
-      await transactionService.addTransaction(currentUser.uid, {
+      // Add to Firebase
+      const newTransaction = await transactionService.addTransaction(currentUser.uid, {
         item: item.trim(),
         emoji,
         amount: amountNum,
         type,
       });
+
+      // Also add to context to trigger challenge completion
+      addTransactionToContext({
+        item: item.trim(),
+        emoji,
+        amount: amountNum,
+        type,
+      });
+
+      // Show success message if it was a sale (challenge completion)
+      if (type === 'sale') {
+        toast({
+          title: 'Transaction Added!',
+          description: 'Sale recorded! Daily challenge completed!',
+        });
+      }
 
       // Reset form
       setItem('');

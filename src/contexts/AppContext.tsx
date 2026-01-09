@@ -64,6 +64,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     earnedToday: 0,
     lastUpdated: new Date().toISOString(),
   });
+
+  // Give welcome bonus when user first signs up (if they don't have coins yet)
+  useEffect(() => {
+    if (user && bizCoins.total === 0) {
+      // Check if this is a new user (created within last 10 minutes)
+      const userCreated = user.createdAt ? new Date(user.createdAt) : null;
+      const isNewUser = userCreated && (Date.now() - userCreated.getTime()) < 600000; // Within 10 minutes
+      
+      // Also check if user has never earned coins (earnedToday is 0 and lastUpdated is old or new)
+      const hasNeverEarned = bizCoins.earnedToday === 0;
+      
+      if (isNewUser && hasNeverEarned) {
+        setBizCoins({
+          total: 100,
+          earnedToday: 100,
+          lastUpdated: new Date().toISOString(),
+        });
+      }
+    }
+  }, [user?.createdAt, bizCoins.total, bizCoins.earnedToday, setBizCoins]);
   const [streak, setStreak] = useLocalStorage<Streak>('udyam-streak', {
     current: 0,
     longest: 0,
