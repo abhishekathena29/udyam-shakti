@@ -195,11 +195,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (prev[id]?.completed) return prev; // Already completed
       
       addCoins(50);
-      // Check if this completes the lesson challenge
-      const lessonChallenge = dailyChallenges.find(c => c.type === 'lesson' && !c.completed);
-      if (lessonChallenge) {
-        completeChallenge(lessonChallenge.id);
-      }
+      
+      // Check if this completes the lesson challenge using current state
+      setDailyChallenges(currentChallenges => {
+        const lessonChallenge = currentChallenges.find(c => c.type === 'lesson' && !c.completed);
+        if (lessonChallenge) {
+          // Complete the challenge and add coins
+          addCoins(lessonChallenge.reward);
+          return currentChallenges.map(c => 
+            c.id === lessonChallenge.id ? { ...c, completed: true } : c
+          );
+        }
+        return currentChallenges;
+      });
       
       return {
         ...prev,
@@ -209,7 +217,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         },
       };
     });
-  }, [setLessonProgress, addCoins, dailyChallenges, completeChallenge]);
+  }, [setLessonProgress, addCoins, setDailyChallenges]);
 
   const addTransaction = useCallback((transaction: Omit<Transaction, 'id' | 'timestamp'>) => {
     const newTransaction: Transaction = {
@@ -219,14 +227,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
     setTransactions(prev => [newTransaction, ...prev]);
     
-    // Check if this completes the sales challenge
+    // Check if this completes the sales challenge using current state
     if (transaction.type === 'sale') {
-      const salesChallenge = dailyChallenges.find(c => c.type === 'sales' && !c.completed);
-      if (salesChallenge) {
-        completeChallenge(salesChallenge.id);
-      }
+      setDailyChallenges(currentChallenges => {
+        const salesChallenge = currentChallenges.find(c => c.type === 'sales' && !c.completed);
+        if (salesChallenge) {
+          // Complete the challenge and add coins
+          addCoins(salesChallenge.reward);
+          return currentChallenges.map(c => 
+            c.id === salesChallenge.id ? { ...c, completed: true } : c
+          );
+        }
+        return currentChallenges;
+      });
     }
-  }, [setTransactions, dailyChallenges, completeChallenge]);
+  }, [setTransactions, addCoins, setDailyChallenges]);
 
   const removeTransaction = useCallback((id: string) => {
     setTransactions(prev => prev.filter(t => t.id !== id));

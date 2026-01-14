@@ -24,13 +24,15 @@ const requiredEnvVars = [
 ];
 
 const missingVars = requiredEnvVars.filter(
-  (varName) => !import.meta.env[varName]
+  (varName) => {
+    const value = import.meta.env[varName];
+    return typeof value !== "string" || value.trim().length === 0;
+  }
 );
 
 if (missingVars.length > 0) {
-  console.error('Missing Firebase environment variables:', missingVars);
   throw new Error(
-    `Missing required Firebase environment variables: ${missingVars.join(', ')}. Please check your .env file.`
+    `Missing or empty Firebase environment variables: ${missingVars.join(', ')}. Please check your .env file.`
   );
 }
 
@@ -39,7 +41,6 @@ let app;
 try {
   app = initializeApp(firebaseConfig);
 } catch (error) {
-  console.error('Firebase initialization error:', error);
   throw new Error('Failed to initialize Firebase. Please check your configuration.');
 }
 
