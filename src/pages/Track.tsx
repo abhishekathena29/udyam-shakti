@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, TrendingUp, TrendingDown, Loader2, RefreshCw } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Loader2, RefreshCw, Pencil, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AddTransactionDialog } from '@/components/transactions/AddTransactionDialog';
 import { transactionService } from '@/services/transactionService';
@@ -18,6 +18,7 @@ export default function Track() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const fetchTransactions = async () => {
     if (!currentUser) {
@@ -52,6 +53,36 @@ export default function Track() {
       title: 'Success',
       description: 'Transaction added successfully',
     });
+  };
+
+  const handleTransactionUpdated = () => {
+    fetchTransactions();
+    toast({
+      title: 'Success',
+      description: 'Transaction updated successfully',
+    });
+  };
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    if (!currentUser) return;
+    const confirmed = window.confirm('Are you sure you want to delete this transaction?');
+    if (!confirmed) return;
+
+    try {
+      await transactionService.deleteTransaction(transactionId);
+      fetchTransactions();
+      toast({
+        title: 'Deleted',
+        description: 'Transaction deleted successfully',
+      });
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete transaction. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   // Calculate summary from transactions
@@ -97,7 +128,7 @@ export default function Track() {
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <Button onClick={() => { setEditingTransaction(null); setIsDialogOpen(true); }}>
             <Plus className="h-4 w-4 mr-2" />
             Add Transaction
           </Button>
@@ -185,8 +216,11 @@ export default function Track() {
                   <TableRow>
                     <TableHead>Item</TableHead>
                     <TableHead>Type</TableHead>
+                    <TableHead>Qty</TableHead>
                     <TableHead>Amount</TableHead>
+                    <TableHead>Profit/Loss</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -208,10 +242,41 @@ export default function Track() {
                         </span>
                       </TableCell>
                       <TableCell className="font-medium">
+                        {transaction.quantity.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="font-medium">
                         ₹{transaction.amount.toLocaleString()}
+                      </TableCell>
+                      <TableCell className={`font-medium ${
+                        transaction.profitLoss >= 0 ? 'text-success' : 'text-destructive'
+                      }`}>
+                        {transaction.profitLoss >= 0 ? '+' : '-'}₹{Math.abs(transaction.profitLoss).toLocaleString()}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {format(new Date(transaction.timestamp), 'MMM d, yyyy')}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditingTransaction(transaction);
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteTransaction(transaction.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -225,10 +290,13 @@ export default function Track() {
       {/* Add Transaction Dialog */}
       <AddTransactionDialog
         open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onSuccess={handleTransactionAdded}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setEditingTransaction(null);
+        }}
+        onSuccess={editingTransaction ? handleTransactionUpdated : handleTransactionAdded}
+        transaction={editingTransaction}
       />
     </div>
   );
 }
-

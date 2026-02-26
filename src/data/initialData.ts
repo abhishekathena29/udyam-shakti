@@ -190,24 +190,6 @@ export const mockLeaderboard: LeaderboardEntry[] = [
 
 export const initialRewards: Reward[] = [
   {
-    id: 'reward-1',
-    title: 'Business Card Design',
-    description: '50 professional business cards with your name and contact',
-    cost: 500,
-    category: 'marketing',
-    emoji: '🪪',
-    redeemed: false,
-  },
-  {
-    id: 'reward-2',
-    title: 'Price Tag Stickers',
-    description: 'Pack of 100 customizable price tag stickers',
-    cost: 300,
-    category: 'tools',
-    emoji: '🏷️',
-    redeemed: false,
-  },
-  {
     id: 'reward-3',
     title: 'Banner Template',
     description: 'Professional banner design for your stall',
@@ -223,15 +205,6 @@ export const initialRewards: Reward[] = [
     cost: 1000,
     category: 'premium',
     emoji: '🧮',
-    redeemed: false,
-  },
-  {
-    id: 'reward-5',
-    title: 'Carry Bags Pack',
-    description: '100 branded carry bags for your customers',
-    cost: 600,
-    category: 'tools',
-    emoji: '🛍️',
     redeemed: false,
   },
   {

@@ -110,6 +110,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }));
   const [transactions, setTransactions] = useLocalStorage<Transaction[]>('udyam-transactions', []);
   const [rewards, setRewards] = useLocalStorage<Reward[]>('udyam-rewards', initialRewards);
+  const physicalRewardIds = new Set(['reward-1', 'reward-2', 'reward-5']);
+
+  useEffect(() => {
+    setRewards(prev => prev.filter(reward => !physicalRewardIds.has(reward.id)));
+  }, [setRewards]);
 
   // Reset daily data if it's a new day
   useEffect(() => {

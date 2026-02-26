@@ -44,7 +44,9 @@ export interface Transaction {
   id: string;
   item: string;
   emoji: string;
+  quantity: number;
   amount: number;
+  profitLoss: number;
   type: 'sale' | 'expense';
   timestamp: string;
 }

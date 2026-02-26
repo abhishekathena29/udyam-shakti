@@ -6,6 +6,7 @@ import {
   where, 
   deleteDoc, 
   doc,
+  updateDoc,
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -14,7 +15,9 @@ import { Transaction } from '@/types/app';
 export interface TransactionRequest {
   item: string;
   emoji: string;
+  quantity: number;
   amount: number;
+  profitLoss: number;
   type: 'sale' | 'expense';
 }
 
@@ -42,7 +45,9 @@ class TransactionService {
           id: doc.id,
           item: data.item,
           emoji: data.emoji,
+          quantity: typeof data.quantity === 'number' ? data.quantity : 1,
           amount: data.amount,
+          profitLoss: typeof data.profitLoss === 'number' ? data.profitLoss : 0,
           type: data.type,
           timestamp: data.timestamp?.toDate?.()?.toISOString() || data.timestamp || new Date().toISOString(),
         });
@@ -91,7 +96,18 @@ class TransactionService {
       throw error;
     }
   }
+
+  async updateTransaction(transactionId: string, transaction: TransactionRequest): Promise<void> {
+    try {
+      const transactionRef = doc(db, 'transactions', transactionId);
+      await updateDoc(transactionRef, {
+        ...transaction,
+      });
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      throw error;
+    }
+  }
 }
 
 export const transactionService = new TransactionService();
-

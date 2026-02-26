@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,23 +10,49 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useApp } from '@/contexts/AppContext';
 import { transactionService } from '@/services/transactionService';
 import { useToast } from '@/hooks/use-toast';
+import { Transaction } from '@/types/app';
 
 interface AddTransactionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  transaction?: Transaction | null;
 }
 
-export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTransactionDialogProps) {
+export function AddTransactionDialog({ open, onOpenChange, onSuccess, transaction }: AddTransactionDialogProps) {
   const { currentUser } = useAuth();
   const { addTransaction: addTransactionToContext } = useApp();
   const { toast } = useToast();
   const [item, setItem] = useState('');
   const [emoji, setEmoji] = useState('📦');
+  const [quantity, setQuantity] = useState('1');
   const [amount, setAmount] = useState('');
+  const [profitLoss, setProfitLoss] = useState('');
   const [type, setType] = useState<'sale' | 'expense'>('sale');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const isEdit = Boolean(transaction);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (transaction) {
+      setItem(transaction.item);
+      setEmoji(transaction.emoji);
+      setQuantity(transaction.quantity.toString());
+      setAmount(transaction.amount.toString());
+      setProfitLoss(transaction.profitLoss.toString());
+      setType(transaction.type);
+      return;
+    }
+
+    setItem('');
+    setEmoji('📦');
+    setQuantity('1');
+    setAmount('');
+    setProfitLoss('');
+    setType('sale');
+  }, [open, transaction]);
 
   const handleQuickSelect = (quickItem: typeof quickAddItems[0]) => {
     setItem(quickItem.name);
@@ -49,6 +75,18 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
       return;
     }
 
+    const quantityNum = parseFloat(quantity);
+    if (isNaN(quantityNum) || quantityNum <= 0) {
+      setError('Please enter a valid quantity');
+      return;
+    }
+
+    const profitLossNum = parseFloat(profitLoss);
+    if (isNaN(profitLossNum)) {
+      setError('Please enter a valid profit/loss amount');
+      return;
+    }
+
     if (!currentUser) {
       setError('You must be logged in to add transactions');
       return;
@@ -57,39 +95,56 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
     setIsSubmitting(true);
 
     try {
-      // Add to Firebase
-      const newTransaction = await transactionService.addTransaction(currentUser.uid, {
-        item: item.trim(),
-        emoji,
-        amount: amountNum,
-        type,
-      });
-
-      // Also add to context to trigger challenge completion
-      addTransactionToContext({
-        item: item.trim(),
-        emoji,
-        amount: amountNum,
-        type,
-      });
-
-      // Show success message if it was a sale (challenge completion)
-      if (type === 'sale') {
-        toast({
-          title: 'Transaction Added!',
-          description: 'Sale recorded! Daily challenge completed!',
+      if (isEdit && transaction) {
+        await transactionService.updateTransaction(transaction.id, {
+          item: item.trim(),
+          emoji,
+          quantity: quantityNum,
+          amount: amountNum,
+          profitLoss: profitLossNum,
+          type,
         });
+      } else {
+        // Add to Firebase
+        await transactionService.addTransaction(currentUser.uid, {
+          item: item.trim(),
+          emoji,
+          quantity: quantityNum,
+          amount: amountNum,
+          profitLoss: profitLossNum,
+          type,
+        });
+
+        // Also add to context to trigger challenge completion
+        addTransactionToContext({
+          item: item.trim(),
+          emoji,
+          quantity: quantityNum,
+          amount: amountNum,
+          profitLoss: profitLossNum,
+          type,
+        });
+
+        // Show success message if it was a sale (challenge completion)
+        if (type === 'sale') {
+          toast({
+            title: 'Transaction Added!',
+            description: 'Sale recorded! Daily challenge completed!',
+          });
+        }
       }
 
       // Reset form
       setItem('');
       setEmoji('📦');
+      setQuantity('1');
       setAmount('');
+      setProfitLoss('');
       setType('sale');
       onOpenChange(false);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add transaction');
+      setError(err instanceof Error ? err.message : 'Failed to save transaction');
     } finally {
       setIsSubmitting(false);
     }
@@ -99,9 +154,9 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
           <DialogDescription>
-            Record a new sale or expense
+            {isEdit ? 'Update this transaction details' : 'Record a new sale or expense'}
           </DialogDescription>
         </DialogHeader>
 
@@ -164,6 +219,20 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
             </div>
           </div>
 
+          {/* Quantity */}
+          <div className="space-y-2">
+            <Label htmlFor="quantity">Quantity</Label>
+            <Input
+              id="quantity"
+              type="number"
+              placeholder="1"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              step="1"
+              min="1"
+            />
+          </div>
+
           {/* Amount */}
           <div className="space-y-2">
             <Label htmlFor="amount">Amount (₹)</Label>
@@ -175,6 +244,19 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
               onChange={(e) => setAmount(e.target.value)}
               step="0.01"
               min="0"
+            />
+          </div>
+
+          {/* Profit/Loss */}
+          <div className="space-y-2">
+            <Label htmlFor="profitLoss">Profit/Loss (₹)</Label>
+            <Input
+              id="profitLoss"
+              type="number"
+              placeholder="0.00"
+              value={profitLoss}
+              onChange={(e) => setProfitLoss(e.target.value)}
+              step="0.01"
             />
           </div>
 
@@ -197,10 +279,10 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Adding...
+                  {isEdit ? 'Saving...' : 'Adding...'}
                 </>
               ) : (
-                'Add Transaction'
+                isEdit ? 'Save Changes' : 'Add Transaction'
               )}
             </Button>
           </div>
@@ -209,4 +291,3 @@ export function AddTransactionDialog({ open, onOpenChange, onSuccess }: AddTrans
     </Dialog>
   );
 }
-
