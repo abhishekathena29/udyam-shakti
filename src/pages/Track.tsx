@@ -114,7 +114,7 @@ export default function Track() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-heading font-bold">Track Sales</h1>
+          <h1 className="section-heading text-3xl font-heading font-bold">Track Sales</h1>
           <p className="text-muted-foreground mt-2">
             Monitor your sales and expenses
           </p>
@@ -141,10 +141,12 @@ export default function Track() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/10">
+                <TrendingUp className="h-4 w-4 text-secondary" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-secondary">₹{summary.sales.toLocaleString()}</div>
@@ -157,10 +159,12 @@ export default function Track() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-              <TrendingDown className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10">
+                <TrendingDown className="h-4 w-4 text-destructive" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-destructive">₹{summary.expenses.toLocaleString()}</div>
@@ -173,10 +177,12 @@ export default function Track() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/10">
+                <TrendingUp className="h-4 w-4 text-success" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-success">₹{summary.profit.toLocaleString()}</div>
@@ -191,7 +197,7 @@ export default function Track() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card>
+        <Card className="rounded-2xl shadow-soft">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
             <CardDescription>Your latest sales and expenses</CardDescription>

@@ -65,7 +65,7 @@ export default function Rewards() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-heading font-bold">Rewards</h1>
+        <h1 className="section-heading text-3xl font-heading font-bold">Rewards</h1>
         <p className="text-muted-foreground mt-2">
           Redeem your BizCoins for amazing rewards
         </p>
@@ -76,7 +76,7 @@ export default function Rewards() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className="gradient-primary text-white border-0">
+        <Card className="gradient-primary bg-dot-grid border-0 text-white shadow-glow-primary">
           <CardHeader>
             <CardTitle className="text-white">Your BizCoins</CardTitle>
             <CardDescription className="text-white/90">
@@ -98,7 +98,7 @@ export default function Rewards() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card>
+        <Card className="rounded-2xl shadow-soft">
           <CardHeader>
             <CardTitle>Daily Challenges</CardTitle>
             <CardDescription>Complete challenges to earn BizCoins</CardDescription>
@@ -108,8 +108,8 @@ export default function Rewards() {
               {dailyChallenges.map((challenge) => (
                 <div
                   key={challenge.id}
-                  className={`flex items-center justify-between rounded-lg border p-4 ${
-                    challenge.completed ? 'bg-muted' : 'bg-card'
+                  className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${
+                    challenge.completed ? 'bg-muted' : 'bg-card hover:border-primary/30'
                   }`}
                 >
                   <div className="flex-1">
@@ -154,7 +154,7 @@ export default function Rewards() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Card>
+        <Card className="rounded-2xl shadow-soft">
           <CardHeader>
             <CardTitle>Available Rewards</CardTitle>
             <CardDescription>Redeem your BizCoins for these rewards</CardDescription>
@@ -174,7 +174,7 @@ export default function Rewards() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
-                    <Card className="h-full">
+                    <Card className="surface-card h-full">
                       <CardHeader>
                         <div className="text-4xl mb-2">{reward.emoji}</div>
                         <CardTitle>{reward.title}</CardTitle>
@@ -210,7 +210,7 @@ export default function Rewards() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card>
+          <Card className="rounded-2xl shadow-soft">
             <CardHeader>
               <CardTitle>Redeemed Rewards</CardTitle>
               <CardDescription>Rewards you've already claimed</CardDescription>

@@ -226,6 +226,48 @@
     0% { transform: scale(0); opacity: 1; }
     100% { transform: scale(1.5); opacity: 0; }
   }
+
+  /* Glass surface for nav/hero overlays */
+  .glass-card {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .dark .glass-card {
+    background: hsl(var(--card) / 0.5);
+  }
+
+  /* Soft radial blob backdrop for hero/marketing sections */
+  .mesh-gradient {
+    background-image:
+      radial-gradient(ellipse 60% 50% at 15% 15%, hsl(var(--primary) / 0.16), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 85% 10%, hsl(var(--accent) / 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 55% at 50% 100%, hsl(var(--secondary) / 0.14), transparent 60%);
+  }
+
+  /* Dotted texture overlay, used under mesh-gradient for depth */
+  .bg-dot-grid {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Gradient-clipped section headings */
+  .section-heading {
+    background: linear-gradient(135deg, hsl(var(--foreground)) 40%, hsl(var(--primary)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Elevated card used for feature/marketing tiles */
+  .surface-card {
+    @apply rounded-2xl border bg-card shadow-soft transition-all duration-300;
+  }
+  .surface-card:hover {
+    @apply shadow-medium -translate-y-1;
+  }
 }
 
 @layer utilities {

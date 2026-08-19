@@ -1,6 +1,8 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { Layout } from "@/components/layout/Layout";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Compass } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -10,23 +12,26 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <Layout>
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <h1 className="mb-4 text-6xl font-bold">404</h1>
-          <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
-          <p className="mb-6 text-sm text-muted-foreground">
-            The page you're looking for doesn't exist.
-          </p>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Return to Home
-          </Link>
+    <div className="mesh-gradient bg-dot-grid flex min-h-screen items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="glass-card w-full max-w-md rounded-2xl p-10 text-center shadow-strong"
+      >
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow-primary">
+          <Compass className="h-8 w-8" />
         </div>
-      </div>
-    </Layout>
+        <h1 className="section-heading font-heading text-6xl font-bold">404</h1>
+        <p className="mt-4 text-lg font-medium">Oops! Page not found</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          The page you're looking for doesn't exist or may have moved.
+        </p>
+        <Button asChild size="lg" className="mt-8 w-full">
+          <Link to="/">Return to Home</Link>
+        </Button>
+      </motion.div>
+    </div>
   );
 };
 

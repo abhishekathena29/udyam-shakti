@@ -19,7 +19,7 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-lg border bg-card p-6 shadow-sm"
+        className="mesh-gradient bg-dot-grid rounded-2xl border p-6 shadow-soft"
       >
         <div className="flex items-center justify-between">
           <div>
@@ -40,10 +40,12 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Today's Sales</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/10">
+                <TrendingUp className="h-4 w-4 text-secondary" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-secondary">₹{summary.sales.toLocaleString()}</div>
@@ -57,10 +59,12 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Expenses</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground rotate-180" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10">
+                <TrendingUp className="h-4 w-4 rotate-180 text-destructive" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-destructive">₹{summary.expenses.toLocaleString()}</div>
@@ -74,10 +78,12 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Profit</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/10">
+                <BarChart3 className="h-4 w-4 text-success" />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-success">₹{summary.profit.toLocaleString()}</div>
@@ -91,10 +97,12 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">BizCoins</CardTitle>
-              <span className="text-lg">🪙</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
+                <span className="text-lg">🪙</span>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{bizCoins.total.toLocaleString()}</div>
@@ -110,7 +118,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Card className="gradient-primary text-white border-0">
+        <Card className="gradient-primary text-white border-0 shadow-glow-primary">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-white">Daily Challenges</CardTitle>
@@ -143,7 +151,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <Card>
+        <Card className="surface-card">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Get started with these actions</CardDescription>
@@ -159,7 +167,7 @@ export default function Home() {
                   key={action.label}
                   asChild
                   variant="outline"
-                  className="h-auto flex-col gap-2 py-6 hover:bg-accent"
+                  className="h-auto flex-col gap-2 py-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-accent hover:shadow-medium"
                 >
                   <Link to={action.href}>
                     <span className="text-3xl">{action.emoji}</span>
@@ -179,14 +187,14 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <Card>
+          <Card className="surface-card">
             <CardHeader>
               <CardTitle>Continue Learning</CardTitle>
               <CardDescription>Pick up where you left off</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted text-3xl">
+                <div className="gradient-secondary flex h-16 w-16 items-center justify-center rounded-xl text-3xl shadow-soft">
                   {inProgressLesson.thumbnailEmoji}
                 </div>
                 <div className="flex-1">

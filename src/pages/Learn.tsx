@@ -334,7 +334,7 @@ export default function Learn() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-heading font-bold">Learn</h1>
+        <h1 className="section-heading text-3xl font-heading font-bold">Learn</h1>
         <p className="text-muted-foreground mt-2">
           Expand your business knowledge with our curated lessons
         </p>
@@ -360,10 +360,10 @@ export default function Learn() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="h-full hover:shadow-lg transition-shadow">
+              <Card className="surface-card h-full">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-2xl">
+                    <div className="gradient-secondary flex h-12 w-12 items-center justify-center rounded-xl text-2xl shadow-soft">
                       {lesson.thumbnailEmoji}
                     </div>
                     {lesson.completed && (
@@ -384,11 +384,11 @@ export default function Learn() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
+                      <Badge variant="outline" className="font-normal text-muted-foreground">
                         {lesson.duration} min
-                      </span>
-                      <Button 
-                        size="sm" 
+                      </Badge>
+                      <Button
+                        size="sm"
                         className="w-full"
                         onClick={() => setSelectedLesson(lesson.id)}
                       >
